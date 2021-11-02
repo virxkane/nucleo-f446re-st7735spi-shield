@@ -32,3 +32,11 @@ Where *fb* - frame buffer color depth, *lcd* - LCD module color depth, *fill per
 **HAL** variant - [nucleo-f446re-st7735spi-shield-hal](https://github.com/virxkane/nucleo-f446re-st7735spi-shield-hal)
 
 Tests performed at SPI clock 11,25 Mbits/s.
+
+### Some photo
+
+Test text drawing:
+![01-test-text.jpg](photo/01-test-text.jpg)
+
+Test unicode text drawing (Russian cyrillic):
+![02-test-text-ru.jpg](photo/02-test-text-ru.jpg)
