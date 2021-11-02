@@ -1,0 +1,18 @@
+
+# Firmware sources workspace & temp files
+CMakeLists.txt.user
+*.o
+*.lss
+*.srec
+*.elf
+*.map
+*.eep
+*.bin
+
+*.diff
+
+# STM32CudeIde build directories
+Debug
+Release
+*.launch
+.settings
