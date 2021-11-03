@@ -5,9 +5,9 @@ project(nucleo-f446re-st7735spi-shield)
 # cmake must be called with following options:
 # cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/mingw-w64-x86_64-arm-none-eabi-toolchain.cmake <...>
 #  or
-# cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gnu-tools-arm-none-eabi-10.3-2021.07.win32.cmake <...>
+# cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gnu-rm-arm-none-eabi-10.3-2021.10.win32.cmake <...>
 #  or
-# cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gnu-tools-arm-none-eabi-10.3-2021.07.linux64.cmake <...>
+# cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/gnu-rm-arm-none-eabi-10.3-2021.10.linux64.cmake <...>
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
