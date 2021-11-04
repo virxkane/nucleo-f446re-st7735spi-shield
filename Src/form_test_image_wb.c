@@ -192,7 +192,7 @@ void formTestImageWB_onDraw(AppState* state)
 #endif	// LCD_COLOR_FORMAT
 
 	y = base_y;
-	setGFXFont(&NotoSans_Regular7pt_mixed);
+	setGFXFont(&FreeSans6pt7b);
 	drawString(2, y, "B/W XBitmap");
 	y += 13;
 

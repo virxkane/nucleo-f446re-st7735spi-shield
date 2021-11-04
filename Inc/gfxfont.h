@@ -4,35 +4,26 @@
 // file and pass address of GFXfont struct to setFont().  Pass NULL to
 // revert to 'classic' fixed-space bitmap font.
 
-// Modified by Chernov A.A. <valexlin@gmail.com> (2018-2021)
-// Added field bitmapSize to struct GFXfont.
-// Added the ability to include multiple character ranges in one font file.
-
 #ifndef _GFXFONT_H_
 #define _GFXFONT_H_
 
-#include <stdint.h>
-
-typedef struct { // Data stored PER GLYPH
-	uint16_t bitmapOffset;     // Pointer into GFXfont->bitmap
-	uint8_t  width, height;    // Bitmap dimensions in pixels
-	uint8_t  xAdvance;         // Distance to advance cursor (x axis)
-	int8_t   xOffset, yOffset; // Dist from cursor pos to UL corner
+/// Font data stored PER GLYPH
+typedef struct {
+  uint16_t bitmapOffset; ///< Pointer into GFXfont->bitmap
+  uint8_t width;         ///< Bitmap dimensions in pixels
+  uint8_t height;        ///< Bitmap dimensions in pixels
+  uint8_t xAdvance;      ///< Distance to advance cursor (x axis)
+  int8_t xOffset;        ///< X dist from cursor pos to UL corner
+  int8_t yOffset;        ///< Y dist from cursor pos to UL corner
 } GFXglyph;
 
+/// Data stored for FONT AS A WHOLE
 typedef struct {
-	uint32_t first;
-	uint32_t last;
-} GFXglyphRange;
-
-typedef struct { // Data stored for FONT AS A WHOLE:
-	const uint8_t  *bitmap;			// Glyph bitmaps, concatenated
-	const GFXglyph *glyph;			// Glyph array
-	const GFXglyphRange* ranges;	// array of the code points ranges
-	uint8_t   rangesCount;			// count of the the code points ranges
-	uint16_t  charsCount;			// characters count
-	uint8_t   yAdvance;				// Newline distance (y axis)
-	uint16_t  bitmapSize;			// Size of Glyph bitmaps
+  uint8_t *bitmap;  ///< Glyph bitmaps, concatenated
+  GFXglyph *glyph;  ///< Glyph array
+  uint16_t first;   ///< ASCII extents (first char)
+  uint16_t last;    ///< ASCII extents (last char)
+  uint8_t yAdvance; ///< Newline distance (y axis)
 } GFXfont;
 
 #endif // _GFXFONT_H_

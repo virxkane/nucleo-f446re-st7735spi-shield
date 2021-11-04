@@ -18,8 +18,14 @@
 #include "app_state.h"
 #include "form_defs.h"
 
-#include "form_test_text.h"
-#include "form_test_text_ru.h"
+#include "form_test_text_freesans_hints_mono.h"
+#include "form_test_text_freesans_hints_auto.h"
+#include "form_test_text_freeserif_hints_mono.h"
+#include "form_test_text_freeserif_hints_auto.h"
+#include "form_test_text_notosans_hints_mono.h"
+#include "form_test_text_notosans_hints_auto.h"
+#include "form_test_text_notoserif_hints_mono.h"
+#include "form_test_text_notoserif_hints_auto.h"
 #include "form_test_image_wb.h"
 #include "form_bench.h"
 
@@ -713,8 +719,14 @@ uint8_t form_data[FORM_DATA_MAX_SZ];
 
 AppState appState;
 
-form_def form_test_text = { &formTestText_reset, &formTestText_onDraw, &formTestText_onButton };
-form_def form_test_text_ru = { &formTestTextRU_reset, &formTestTextRU_onDraw, &formTestTextRU_onButton };
+form_def form_test_text_freesans_hintsmono = { &formTestTextFreeSansHintsMono_reset, &formTestTextFreeSansHintsMono_onDraw, &formTestTextFreeSansHintsMono_onButton };
+form_def form_test_text_freesans_hintsauto = { &formTestTextFreeSansHintsAuto_reset, &formTestTextFreeSansHintsAuto_onDraw, &formTestTextFreeSansHintsAuto_onButton };
+form_def form_test_text_freeserif_hintsmono = { &formTestTextFreeSerifHintsMono_reset, &formTestTextFreeSerifHintsMono_onDraw, &formTestTextFreeSerifHintsMono_onButton };
+form_def form_test_text_freeserif_hintsauto = { &formTestTextFreeSerifHintsAuto_reset, &formTestTextFreeSerifHintsAuto_onDraw, &formTestTextFreeSerifHintsAuto_onButton };
+form_def form_test_text_notosans_hintsmono = { &formTestTextNotoSansHintsMono_reset, &formTestTextNotoSansHintsMono_onDraw, &formTestTextNotoSansHintsMono_onButton };
+form_def form_test_text_notosans_hintsauto = { &formTestTextNotoSansHintsAuto_reset, &formTestTextNotoSansHintsAuto_onDraw, &formTestTextNotoSansHintsAuto_onButton };
+form_def form_test_text_notoserif_hintsmono = { &formTestTextNotoSerifHintsMono_reset, &formTestTextNotoSerifHintsMono_onDraw, &formTestTextNotoSerifHintsMono_onButton };
+form_def form_test_text_notoserif_hintsauto = { &formTestTextNotoSerifHintsAuto_reset, &formTestTextNotoSerifHintsAuto_onDraw, &formTestTextNotoSerifHintsAuto_onButton };
 form_def form_test_image_wb = { &formTestImageWB_reset, &formTestImageWB_onDraw, &formTestImageWB_onButton };
 form_def form_bench = { &formBench_reset, &formBench_onDraw, &formBench_onButton };
 
@@ -1133,7 +1145,7 @@ int main(void)
 #endif
 	setColorFormat(LCD_COLOR_FORMAT);
 
-	curr_form = &form_test_text;
+	curr_form = &form_test_text_freesans_hintsmono;
 	curr_form->reset_proc(&appState);
 
 	// Turn off LED1 (PA0)
@@ -1177,11 +1189,29 @@ int main(void)
 			// запрошено переключение на другую форму
 			switch (appState.form_code)
 			{
-				case FORM_TEXT_TEST:
-					curr_form = &form_test_text;
+				case FORM_TEXT_TEST_FREESANS_MONO:
+					curr_form = &form_test_text_freesans_hintsmono;
 					break;
-				case FORM_TEXT_RU_TEST:
-					curr_form = &form_test_text_ru;
+				case FORM_TEXT_TEST_FREESANS_AUTO:
+					curr_form = &form_test_text_freesans_hintsauto;
+					break;
+				case FORM_TEXT_TEST_FREESERIF_MONO:
+					curr_form = &form_test_text_freeserif_hintsmono;
+					break;
+				case FORM_TEXT_TEST_FREESERIF_AUTO:
+					curr_form = &form_test_text_freeserif_hintsauto;
+					break;
+				case FORM_TEXT_TEST_NOTOSANS_MONO:
+					curr_form = &form_test_text_notosans_hintsmono;
+					break;
+				case FORM_TEXT_TEST_NOTOSANS_AUTO:
+					curr_form = &form_test_text_notosans_hintsauto;
+					break;
+				case FORM_TEXT_TEST_NOTOSERIF_MONO:
+					curr_form = &form_test_text_notoserif_hintsmono;
+					break;
+				case FORM_TEXT_TEST_NOTOSERIF_AUTO:
+					curr_form = &form_test_text_notoserif_hintsauto;
 					break;
 				case FORM_WB_IMAGE_TEST:
 					curr_form = &form_test_image_wb;
@@ -1190,7 +1220,7 @@ int main(void)
 					curr_form = &form_bench;
 					break;
 				default:
-					curr_form = &form_test_text;
+					curr_form = &form_test_text_freesans_hintsmono;
 					break;
 			}
 			curr_form->reset_proc(&appState);

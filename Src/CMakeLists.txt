@@ -14,11 +14,16 @@ set(SRC_LIST
 	rgbcolor.c
 	gfx.c
 	fonts.c
-	utf8_proc.c
 
 	form_defs.c
-	form_test_text.c
-	form_test_text_ru.c
+	form_test_text_freesans_hints_mono.c
+	form_test_text_freesans_hints_auto.c
+	form_test_text_freeserif_hints_mono.c
+	form_test_text_freeserif_hints_auto.c
+	form_test_text_notosans_hints_mono.c
+	form_test_text_notosans_hints_auto.c
+	form_test_text_notoserif_hints_mono.c
+	form_test_text_notoserif_hints_auto.c
 	form_test_image_wb.c
 	form_bench.c
 )

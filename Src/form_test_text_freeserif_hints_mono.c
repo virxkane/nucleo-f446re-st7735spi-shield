@@ -5,7 +5,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "form_bench.h"
+#include "form_test_text_freeserif_hints_mono.h"
 #include "buttons.h"
 #include "form_defs.h"
 #include "gfx.h"
@@ -22,23 +22,26 @@ typedef struct FormData
 } FormData;
 #endif
 
-void formBench_reset(AppState* state)
+void formTestTextFreeSerifHintsMono_reset(AppState* state)
 {
 	//FormData* data = (FormData*)state->form_data;
 }
 
-void formBench_onDraw(AppState* state)
+void formTestTextFreeSerifHintsMono_onDraw(AppState* state)
 {
-	//FormData* data = (FormData*)state->form_data;
-
-	const int16_t base_y = 38;
+	const int16_t base_y = 0;
 	int16_t y;
 
-	form_drawHeader(state);
+	//form_drawHeader(state);
+
+	//FormData* data = (FormData*)state->form_data;
+
+	// test text drawing functions.
 
 	setTextDrawMode(0);
 
 #if LCD_COLOR_FORMAT == COLOR_FORMAT_INDEX1BPP
+	uint8_t background_color = 0;
 	uint8_t foreground_color = 1;
 	uint8_t text_color_1 = 1;
 	uint8_t text_color_2 = 1;
@@ -48,7 +51,8 @@ void formBench_onDraw(AppState* state)
 	uint8_t text_color_6 = 1;
 	uint8_t text_color_7 = 1;
 #elif LCD_COLOR_FORMAT == COLOR_FORMAT_INDEX4BPP
-	uint8_t foreground_color = VGA16_WHITE;
+	uint8_t background_color = 0;
+	uint8_t foreground_color = 15;
 	uint8_t text_color_1 = VGA16_WHITE;
 	uint8_t text_color_2 = VGA16_BRIGHT_GREEN;
 	uint8_t text_color_3 = VGA16_BRIGHT_RED;
@@ -57,6 +61,7 @@ void formBench_onDraw(AppState* state)
 	uint8_t text_color_6 = VGA16_WHITE;
 	uint8_t text_color_7 = VGA16_BRIGHT_MAGENTA;
 #elif LCD_COLOR_FORMAT == COLOR_FORMAT_INDEX8BPP
+	uint8_t background_color = 0x0;
 	uint8_t foreground_color = 0x0F;
 	uint8_t text_color_1 = 0x0F;
 	uint8_t text_color_2 = 0x0A;
@@ -66,6 +71,7 @@ void formBench_onDraw(AppState* state)
 	uint8_t text_color_6 = 0x1F;
 	uint8_t text_color_7 = 0x24;
 #elif (LCD_COLOR_FORMAT == COLOR_FORMAT_RGB565) || (LCD_COLOR_FORMAT == COLOR_FORMAT_RGB888)
+	RGBColor background_color = COLOR_BLACK;
 	RGBColor foreground_color = COLOR_WHITE;
 	RGBColor text_color_1 = COLOR_WHITE;
 	RGBColor text_color_2 = COLOR_GREEN;
@@ -93,43 +99,79 @@ void formBench_onDraw(AppState* state)
 #define setForegroundColor	setForegroundRGBColor
 #define setTextColor	setTextRGBColor
 #endif
-	
-	char str_speed[40];
-	sprintf(str_speed, "rend: %lums, sync: %lums", state->rendTime, state->syncTime);
 
 	y = base_y;
 
-	//setBackgroundColor(0);
+	setBackgroundColor(background_color);
 	setForegroundColor(foreground_color);
 
-	setGFXFont(&FreeSans6pt7b);
+	setGFXFont(&FreeSerif6pt7b);
 	setTextColor(text_color_1);
-	drawString(2, y, str_speed);
-	y += 20;
+	drawString(10, y, "FreeSerif 6, 9, mono");
+	y += FreeSerif6pt7b.yAdvance - 2;
+
+	setGFXFont(&FreeSerif6pt7b);
+	setTextColor(text_color_1);
+	drawString(2, y, "0123456789ABCDEF");
+	y += FreeSerif6pt7b.yAdvance - 2;
 
 	setTextColor(text_color_2);
-	drawString(2, y, "Text Line 1");
-	y += 13;
+	drawString(2, y, "GHIJKLMNOPQRSTU");
+	y += FreeSerif6pt7b.yAdvance - 2;
 
-	setGFXFont(&FreeSansBold6pt7b);
 	setTextColor(text_color_3);
-	drawString(2, y, "XY 101");
-	y += 22;
+	drawString(2, y, "VWXYZabcdefghijklm");
+	y += FreeSerif6pt7b.yAdvance - 2;
 
-	setGFXFont(&FreeSansBoldOblique6pt7b);
 	setTextColor(text_color_4);
-	drawString(2, y, "Text Line 3");
-	y += 13;
+	drawString(2, y, "nopqrstuvwxyz");
+	y += FreeSerif6pt7b.yAdvance - 2;
+
+	setGFXFont(&FreeSerifBold6pt7b);
+	setTextColor(text_color_5);
+	drawString(2, y, "Bold Text");
+	y += FreeSerifBold6pt7b.yAdvance - 2;
+
+	setGFXFont(&FreeSerifItalic6pt7b);
+	setTextColor(text_color_6);
+	drawString(2, y, "Italic Text");
+	y += FreeSerifItalic6pt7b.yAdvance - 2;
+
+	setGFXFont(&FreeSerifBoldItalic6pt7b);
+	setTextColor(text_color_7);
+	drawString(2, y, "Bold Italic Text");
+	y += FreeSerifBoldItalic6pt7b.yAdvance - 2;
+
+	// 9pt
+	setGFXFont(&FreeSerif9pt7b);
+	setTextColor(text_color_1);
+	drawString(2, y, "0123ABCabc");
+	y += FreeSerif9pt7b.yAdvance - 4;
+
+	setGFXFont(&FreeSerifBold9pt7b);
+	setTextColor(text_color_2);
+	drawString(2, y, "0123ABCabc");
+	y += FreeSerifBold9pt7b.yAdvance - 4;
+
+	setGFXFont(&FreeSerifItalic9pt7b);
+	setTextColor(text_color_3);
+	drawString(2, y, "0123ABCabc");
+	y += FreeSerifItalic9pt7b.yAdvance - 4;
+
+	setGFXFont(&FreeSerifBoldItalic9pt7b);
+	setTextColor(text_color_4);
+	drawString(2, y, "0123ABCabc");
+	//y += FreeSerifBoldItalic9pt7b.yAdvance - 4;
 }
 
-void formBench_onButton(AppState* state, uint8_t btn)
+void formTestTextFreeSerifHintsMono_onButton(AppState* state, uint8_t btn)
 {
 	//FormData* data = (FormData*)state->form_data;
 	switch (btn)
 	{
 	case BUTTON_CODE_2:
 		// Change form
-		state->form_code = FORM_TEXT_TEST_FREESANS_MONO;
+		state->form_code = FORM_TEXT_TEST_FREESERIF_AUTO;
 		state->changed |= APPSTATE_CHANGED_FORM;
 		break;
 	}

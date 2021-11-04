@@ -6,7 +6,6 @@
  ***************************************************************************/
 
 #include "gfx.h"
-#include "utf8_proc.h"
 
 #include <string.h>
 
@@ -258,6 +257,38 @@ static inline void _drawBitmap_1bpp(int16_t x, int16_t y, uint16_t width, uint16
 	}
 }
 
+static inline void _drawBitmap_1bpp_U(int16_t x, int16_t y, uint16_t width, uint16_t height, const uint8_t *bitmap, const uint8_t* raw_fgcolor, const uint8_t* raw_bgcolor)
+{
+	if (!s_setPixelColorFuncPtr)
+		return;
+	int16_t xx;
+	int16_t yy;
+	uint8_t c;
+	const uint8_t* ptr = bitmap;
+	uint8_t ptr_off = 7;
+	// от старшего бита к младшему
+	// от младшего байта к старшему
+	for (yy = y; yy < y + height; yy++)
+	{
+		for (xx = x; xx < x + width; xx++)
+		{
+			//c = (*ptr & (1 << ptr_off)) >> ptr_off;
+			c = (*ptr >> ptr_off) & 0x01;
+			if (c != 0)
+				s_setPixelColorFuncPtr(xx, yy, raw_fgcolor);
+			else if (raw_bgcolor != 0)
+				s_setPixelColorFuncPtr(xx, yy, raw_bgcolor);
+			if (0 == ptr_off)
+			{
+				ptr_off = 7;
+				ptr++;
+			}
+			else
+				ptr_off--;
+		}
+	}
+}
+
 void drawBitmap_1bpp(int16_t x, int16_t y, uint16_t width, uint16_t height, const uint8_t* bitmap, size_t sz)
 {
 	_drawBitmap_1bpp(x, y, width, height, bitmap, sz, s_rawfgColor, s_rawbgColor);
@@ -280,37 +311,16 @@ void setTextDrawMode(uint8_t mode)
 
 int16_t drawChar(int16_t x, int16_t y, char ch)
 {
-	return drawChar32(x, y, (uint32_t)ch);
-}
-
-int16_t drawChar32(int16_t x, int16_t y, uint32_t ch)
-{
 	if (!s_setPixelColorFuncPtr || !s_gfxFont)
 		return 0;
 	const GFXglyph* glyph;
-	size_t bitmap_sz;
 
 	uint16_t idx = 0;
-	for (int i = 0; i < s_gfxFont->rangesCount; i++)
-	{
-		if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-		{
-			idx += ch - s_gfxFont->ranges[i].first;
-			break;
-		}
-		idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-	}
-	if (idx == s_gfxFont->charsCount)	// not found
-		idx = 0;
+	if (ch >= s_gfxFont->first && ch <= s_gfxFont->last)
+		idx = ch - s_gfxFont->first;
 	glyph = s_gfxFont->glyph + idx;
 	if (glyph->width > 0 && glyph->height > 0)
-	{
-		if (idx == s_gfxFont->charsCount - 1)
-			bitmap_sz = s_gfxFont->bitmapSize - glyph->bitmapOffset;
-		else
-			bitmap_sz = glyph[1].bitmapOffset - glyph->bitmapOffset;
-		_drawBitmap_1bpp(x + glyph->xOffset, y + glyph->yOffset + 2*s_gfxFont->yAdvance/3, glyph->width, glyph->height, s_gfxFont->bitmap + glyph->bitmapOffset, bitmap_sz, s_rawtxtColor, s_txtDrawMode != 0 ? s_rawbgColor : 0);
-	}
+		_drawBitmap_1bpp_U(x + glyph->xOffset, y + glyph->yOffset + 2*s_gfxFont->yAdvance/3, glyph->width, glyph->height, s_gfxFont->bitmap + glyph->bitmapOffset, s_rawtxtColor, s_txtDrawMode != 0 ? s_rawbgColor : 0);
 	return x + glyph->xAdvance;
 }
 
@@ -322,32 +332,16 @@ int16_t drawString(int16_t x, int16_t y, const char* str)
 	uint32_t ch;
 	uint16_t idx = 0;
 	const GFXglyph* glyph;
-	size_t bitmap_sz;
 
 	while (*ptr)
 	{
 		ch = (uint32_t)*ptr;
 		idx = 0;
-		for (int i = 0; i < s_gfxFont->rangesCount; i++)
-		{
-			if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-			{
-				idx += ch - s_gfxFont->ranges[i].first;
-				break;
-			}
-			idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-		}
-		if (idx == s_gfxFont->charsCount)	// not found
-			idx = 0;
+		if (ch >= s_gfxFont->first && ch <= s_gfxFont->last)
+			idx = ch - s_gfxFont->first;
 		glyph = s_gfxFont->glyph + idx;
 		if (glyph->width > 0 && glyph->height > 0)
-		{
-			if (idx == s_gfxFont->charsCount - 1)
-				bitmap_sz = s_gfxFont->bitmapSize - glyph->bitmapOffset;
-			else
-				bitmap_sz = glyph[1].bitmapOffset - glyph->bitmapOffset;
-			_drawBitmap_1bpp(x + glyph->xOffset, y + glyph->yOffset + 2*s_gfxFont->yAdvance/3, glyph->width, glyph->height, s_gfxFont->bitmap + glyph->bitmapOffset, bitmap_sz, s_rawtxtColor, s_txtDrawMode != 0 ? s_rawbgColor : 0);
-		}
+			_drawBitmap_1bpp_U(x + glyph->xOffset, y + glyph->yOffset + 2*s_gfxFont->yAdvance/3, glyph->width, glyph->height, s_gfxFont->bitmap + glyph->bitmapOffset, s_rawtxtColor, s_txtDrawMode != 0 ? s_rawbgColor : 0);
 		// to next char
 		ptr++;
 		x += glyph->xAdvance;
@@ -355,57 +349,7 @@ int16_t drawString(int16_t x, int16_t y, const char* str)
 	return x;
 }
 
-int16_t drawStringUTF8(int16_t x, int16_t y, const char* str)
-{
-	if (!s_setPixelColorFuncPtr || !s_gfxFont)
-		return 0;
-	const char* ptr = str;
-	uint32_t ch;
-	int ret;
-	uint16_t idx = 0;
-	const GFXglyph* glyph;
-	size_t bitmap_sz;
-
-	while (*ptr)
-	{
-		ret = myutf8_codePoint(&ch, ptr);
-		if (ret > 0)
-			ptr += (unsigned int)ret;
-		else
-			break;
-		idx = 0;
-		for (int i = 0; i < s_gfxFont->rangesCount; i++)
-		{
-			if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-			{
-				idx += ch - s_gfxFont->ranges[i].first;
-				break;
-			}
-			idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-		}
-		if (idx == s_gfxFont->charsCount)	// not found
-			idx = 0;
-		glyph = s_gfxFont->glyph + idx;
-		if (glyph->width > 0 && glyph->height > 0)
-		{
-			if (idx == s_gfxFont->charsCount - 1)
-				bitmap_sz = s_gfxFont->bitmapSize - glyph->bitmapOffset;
-			else
-				bitmap_sz = glyph[1].bitmapOffset - glyph->bitmapOffset;
-			_drawBitmap_1bpp(x + glyph->xOffset, y + glyph->yOffset + 2*s_gfxFont->yAdvance/3, glyph->width, glyph->height, s_gfxFont->bitmap + glyph->bitmapOffset, bitmap_sz, s_rawtxtColor, s_txtDrawMode != 0 ? s_rawbgColor : 0);
-		}
-		// to next char
-		x += glyph->xAdvance;
-	}
-	return x;
-}
-
 uint16_t charWidth(char ch)
-{
-	return char32Width((uint32_t)ch);
-}
-
-uint16_t char32Width(uint32_t ch)
 {
 	if (!s_gfxFont)
 		return 0;
@@ -415,17 +359,8 @@ uint16_t char32Width(uint32_t ch)
 
 	if (ch)
 	{
-		for (int i = 0; i < s_gfxFont->rangesCount; i++)
-		{
-			if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-			{
-				idx += ch - s_gfxFont->ranges[i].first;
-				break;
-			}
-			idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-		}
-		if (idx == s_gfxFont->charsCount)	// not found
-			idx = 0;
+		if (ch >= s_gfxFont->first && ch <= s_gfxFont->last)
+			idx = ch - s_gfxFont->first;
 		glyph = s_gfxFont->glyph + idx;
 		if (glyph->width > 0 && glyph->height > 0)
 			width = glyph->xAdvance;
@@ -448,7 +383,6 @@ uint16_t textWidthLen(const char *str, int16_t len)
 	const char* ptr = str;
 	uint32_t ch;
 	int16_t pos = 0;
-	int i;
 	if (len < 0)
 		len = 32767;
 
@@ -456,72 +390,14 @@ uint16_t textWidthLen(const char *str, int16_t len)
 	{
 		ch = (uint32_t)*ptr;
 		idx = 0;
-		for (i = 0; i < s_gfxFont->rangesCount; i++)
-		{
-			if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-			{
-				idx += ch - s_gfxFont->ranges[i].first;
-				break;
-			}
-			idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-		}
-		if (idx == s_gfxFont->charsCount)	// not found
-			idx = 0;
+		if (ch >= s_gfxFont->first && ch <= s_gfxFont->last)
+			idx = ch - s_gfxFont->first;
 		glyph = s_gfxFont->glyph + idx;
 		if (glyph->width > 0 && glyph->height > 0)
 			width += glyph->xAdvance;
 		// to next char
 		ptr++;
 		pos++;
-	}
-	return width;
-}
-
-uint16_t textUTF8Width(const char* str)
-{
-	return textUTF8WidthLen(str, -1);
-}
-
-uint16_t textUTF8WidthLen(const char* str, int16_t len)
-{
-	if (!s_gfxFont)
-		return 0;
-	uint16_t width = 0;
-	const GFXglyph* glyph;
-	uint16_t idx = 0;
-	const char* ptr = str;
-	uint32_t ch;
-	int ret;
-	int16_t pos = 0;
-	int i;
-	if (len < 0)
-		len = 32767;
-
-	while (*ptr && pos < len)
-	{
-		ret = myutf8_codePoint(&ch, ptr);
-		if (ret > 0)
-		{
-			ptr += (unsigned int)ret;
-			pos += (unsigned int)ret;
-		}
-		else
-			break;
-		idx = 0;
-		for (i = 0; i < s_gfxFont->rangesCount; i++)
-		{
-			if (ch >= s_gfxFont->ranges[i].first && ch <= s_gfxFont->ranges[i].last)
-			{
-				idx += ch - s_gfxFont->ranges[i].first;
-				break;
-			}
-			idx += s_gfxFont->ranges[i].last - s_gfxFont->ranges[i].first + 1;
-		}
-		if (idx == s_gfxFont->charsCount)	// not found
-			idx = 0;
-		glyph = s_gfxFont->glyph + idx;
-		if (glyph->width > 0 && glyph->height > 0)
-			width += glyph->xAdvance;
 	}
 	return width;
 }

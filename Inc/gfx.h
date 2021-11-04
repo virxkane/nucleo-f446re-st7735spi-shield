@@ -76,17 +76,12 @@ const GFXfont* gfxFont();
 void setGFXFont(const GFXfont* gfxont);
 
 int16_t drawChar(int16_t x, int16_t y, char c);
-int16_t drawChar32(int16_t x, int16_t y, uint32_t c);
 
 int16_t drawString(int16_t x, int16_t y, const char* str);
-int16_t drawStringUTF8(int16_t x, int16_t y, const char* str);
 
 uint16_t charWidth(char ch);
-uint16_t char32Width(uint32_t ch);
 uint16_t textWidth(const char* str);
 uint16_t textWidthLen(const char* str, int16_t len);
-uint16_t textUTF8Width(const char* str);
-uint16_t textUTF8WidthLen(const char* str, int16_t len);
 
 #ifdef __cplusplus
 }

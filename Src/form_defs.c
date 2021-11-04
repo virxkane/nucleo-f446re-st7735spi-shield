@@ -87,8 +87,8 @@ void form_drawHeader(AppState* state)
 		sprintf(str_format, "FB:%s; LCD:%s", gfx_cf, st7735_cf);
 	}
 
-	setGFXFont(&NotoSans_Regular7pt_mixed);
-	drawString(3,  0, "ST7735 shield Demo.");
-	drawString(3, 12, "Hardware SPI, CMSIS.");
-	drawString(3, 24, str_format);
+	setGFXFont(&FreeSans6pt7b);
+	drawString(3,  1, "ST7735 shield Demo.");
+	drawString(3, 13, "Hardware SPI, CMSIS.");
+	drawString(3, 25, str_format);
 }
