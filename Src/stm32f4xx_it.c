@@ -335,6 +335,11 @@ void SysTick_Handler(void)
 		_delay_counter--;
 	if (_perf_counter != 0xFFFFFFFF)
 		_perf_counter++;
+	for (uint8_t i = 0; i < SYSTICK_TIMERS_MAX; i++)
+	{
+		if (_timer_counter[i] != 0)
+			--_timer_counter[i];
+	}
 	/* USER CODE END SysTick_IRQn 1 */
 }
 
