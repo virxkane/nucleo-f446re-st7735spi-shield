@@ -1,4 +1,3 @@
-/* USER CODE BEGIN Header */
 /**
  ******************************************************************************
  * @file    stm32f4xx_it.c
@@ -16,51 +15,20 @@
  *
  ******************************************************************************
  */
-/* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
-//#include "main.h"
 #include "stm32f4xx_it.h"
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 #include "systick_delay_ms.h"
 #include "mcu_defs.h"
 #include <stdio.h>
 #include <stdint.h>
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
-/* USER CODE END TD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
 
 #define UNUSED(x) { (void)x; }
 
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
 static unsigned long volatile _delay_counter = 0;
 static unsigned long volatile _perf_counter = 0xFFFFFFFF;
 static volatile uint32_t _timer_counter[SYSTICK_TIMERS_MAX] = { 0 };
 // total 40 bytes
-/* USER CODE END PV */
 
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 static inline void resetToSafetyMode()
 {
 	SystemCoreClockUpdate();
@@ -127,13 +95,6 @@ static inline void LED1_blink_inf(uint16_t period)
 			;
 	}
 }
-/* USER CODE END 0 */
-
-/* External variables --------------------------------------------------------*/
-
-/* USER CODE BEGIN EV */
-
-/* USER CODE END EV */
 
 /******************************************************************************/
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
@@ -143,12 +104,6 @@ static inline void LED1_blink_inf(uint16_t period)
  */
 void NMI_Handler(void)
 {
-	/* USER CODE BEGIN NonMaskableInt_IRQn 0 */
-
-	/* USER CODE END NonMaskableInt_IRQn 0 */
-	/* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-
-	/* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
 /**
@@ -156,7 +111,6 @@ void NMI_Handler(void)
  */
 void HardFault_Handler(void)
 {
-	/* USER CODE BEGIN HardFault_IRQn 0 */
 #ifdef DEBUG_MSG
 	printf("HardFault!\n");
 	printf("SCB_CFSR=0x%08lX\n", SCB->CFSR);
@@ -170,10 +124,8 @@ void HardFault_Handler(void)
 	const int period = 2000;
 	volatile uint32_t _delay_cnt = (period/2)*(SystemCoreClock/4000);		// us * (SystemCoreClock / 1000000) / 4
 	volatile uint32_t _cnt;
-	/* USER CODE END HardFault_IRQn 0 */
 	while (1)
 	{
-		/* USER CODE BEGIN W1_HardFault_IRQn 0 */
 		// Turn off LED1 (PA0)
 		GPIOA->BSRR |= GPIO_BSRR_BR0_Msk;
 		_cnt = _delay_cnt;
@@ -184,7 +136,6 @@ void HardFault_Handler(void)
 		_cnt = _delay_cnt;
 		while (--_cnt)
 			;
-		/* USER CODE END W1_HardFault_IRQn 0 */
 	}
 }
 
@@ -193,7 +144,6 @@ void HardFault_Handler(void)
  */
 void MemManage_Handler(void)
 {
-	/* USER CODE BEGIN MemoryManagement_IRQn 0 */
 #ifdef DEBUG_MSG
 	printf("MemFault!\n");
 	if (SCB->CFSR & SCB_CFSR_MMARVALID_Msk)
@@ -203,10 +153,8 @@ void MemManage_Handler(void)
 	const int period = 400;
 	volatile uint32_t _delay_cnt = (period/2)*(SystemCoreClock/4000);		// us * (SystemCoreClock / 1000000) / 4
 	volatile uint32_t _cnt;
-	/* USER CODE END MemoryManagement_IRQn 0 */
 	while (1)
 	{
-		/* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
 		// Turn off LED1 (PA0)
 		GPIOA->BSRR |= GPIO_BSRR_BR0_Msk;
 		_cnt = _delay_cnt;
@@ -217,7 +165,6 @@ void MemManage_Handler(void)
 		_cnt = _delay_cnt;
 		while (--_cnt)
 			;
-		/* USER CODE END W1_MemoryManagement_IRQn 0 */
 	}
 }
 
@@ -226,7 +173,6 @@ void MemManage_Handler(void)
  */
 void BusFault_Handler(void)
 {
-	/* USER CODE BEGIN BusFault_IRQn 0 */
 #ifdef DEBUG_MSG
 	printf("BusFault!\n");
 	if (SCB->CFSR & SCB_CFSR_BFARVALID_Msk)
@@ -236,10 +182,8 @@ void BusFault_Handler(void)
 	const int period = 800;
 	volatile uint32_t _delay_cnt = (period/2)*(SystemCoreClock/4000);		// us * (SystemCoreClock / 1000000) / 4
 	volatile uint32_t _cnt;
-	/* USER CODE END BusFault_IRQn 0 */
 	while (1)
 	{
-		/* USER CODE BEGIN W1_BusFault_IRQn 0 */
 		// Turn off LED1 (PA0)
 		GPIOA->BSRR |= GPIO_BSRR_BR0_Msk;
 		_cnt = _delay_cnt;
@@ -250,7 +194,6 @@ void BusFault_Handler(void)
 		_cnt = _delay_cnt;
 		while (--_cnt)
 			;
-		/* USER CODE END W1_BusFault_IRQn 0 */
 	}
 }
 
@@ -259,15 +202,12 @@ void BusFault_Handler(void)
  */
 void UsageFault_Handler(void)
 {
-	/* USER CODE BEGIN UsageFault_IRQn 0 */
 	resetToSafetyMode();
 	const int period = 1600;
 	volatile uint32_t _delay_cnt = (period/2)*(SystemCoreClock/4000);		// us * (SystemCoreClock / 1000000) / 4
 	volatile uint32_t _cnt;
-	/* USER CODE END UsageFault_IRQn 0 */
 	while (1)
 	{
-		/* USER CODE BEGIN W1_UsageFault_IRQn 0 */
 		// Turn off LED1 (PA0)
 		GPIOA->BSRR |= GPIO_BSRR_BR0_Msk;
 		_cnt = _delay_cnt;
@@ -278,7 +218,6 @@ void UsageFault_Handler(void)
 		_cnt = _delay_cnt;
 		while (--_cnt)
 			;
-		/* USER CODE END W1_UsageFault_IRQn 0 */
 	}
 }
 
@@ -287,12 +226,6 @@ void UsageFault_Handler(void)
  */
 void SVC_Handler(void)
 {
-	/* USER CODE BEGIN SVCall_IRQn 0 */
-
-	/* USER CODE END SVCall_IRQn 0 */
-	/* USER CODE BEGIN SVCall_IRQn 1 */
-
-	/* USER CODE END SVCall_IRQn 1 */
 }
 
 /**
@@ -300,12 +233,6 @@ void SVC_Handler(void)
  */
 void DebugMon_Handler(void)
 {
-	/* USER CODE BEGIN DebugMonitor_IRQn 0 */
-
-	/* USER CODE END DebugMonitor_IRQn 0 */
-	/* USER CODE BEGIN DebugMonitor_IRQn 1 */
-
-	/* USER CODE END DebugMonitor_IRQn 1 */
 }
 
 /**
@@ -313,12 +240,6 @@ void DebugMon_Handler(void)
  */
 void PendSV_Handler(void)
 {
-	/* USER CODE BEGIN PendSV_IRQn 0 */
-
-	/* USER CODE END PendSV_IRQn 0 */
-	/* USER CODE BEGIN PendSV_IRQn 1 */
-
-	/* USER CODE END PendSV_IRQn 1 */
 }
 
 /**
@@ -326,11 +247,7 @@ void PendSV_Handler(void)
  */
 void SysTick_Handler(void)
 {
-	/* USER CODE BEGIN SysTick_IRQn 0 */
-
-	/* USER CODE END SysTick_IRQn 0 */
 	//HAL_IncTick();
-	/* USER CODE BEGIN SysTick_IRQn 1 */
 	if (_delay_counter != 0)
 		_delay_counter--;
 	if (_perf_counter != 0xFFFFFFFF)
@@ -340,7 +257,6 @@ void SysTick_Handler(void)
 		if (_timer_counter[i] != 0)
 			--_timer_counter[i];
 	}
-	/* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -350,7 +266,6 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f4xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
 void SysTick_Delay_ms(unsigned long ms)
 {
 	_delay_counter = ms;
@@ -385,6 +300,3 @@ uint8_t SysTick_CheckTimerDone(uint8_t no)
 		return _timer_counter[no] == 0;
 	return 1;
 }
-
-/* USER CODE END 1 */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
